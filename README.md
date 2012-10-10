@@ -8,6 +8,6 @@ You need the databases file for google authenticator (may vary how to retrieve i
 Start the application
 ---------------------
 
-mvn java:exec -Dexec.mainClass=be.kokotchy.ExportSecrets databasename
+mvn exec:java -Dexec.mainClass=be.kokotchy.ExportSecrets -Dexec.args=test.db
 
 It will display a list of url to QR code that can be scan by any devices

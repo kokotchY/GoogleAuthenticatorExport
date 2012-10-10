@@ -1,3 +1,5 @@
-GoogleAuthenticatorExport.iml
+*.iml
 atlassian-ide-plugin.xml
 .idea
+target
+*.db

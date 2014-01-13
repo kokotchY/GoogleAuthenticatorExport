@@ -1,6 +1,9 @@
 package be.kokotchy;
 
+import be.kokotchy.util.QRCodeUtil;
+
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.*;
 
@@ -10,7 +13,7 @@ import java.sql.*;
 public class ExportSecrets {
 	public static void main(String[] args) {
 		Connection c = null;
-		String url = "https://www.google.com/chart?chs=200x200&chld=M|0&cht=qr&chl=otpauth://totp/";
+
 		// qrcode-terminal is available here: https://github.com/gtanner/qrcode-terminal.git
 		String app = "/usr/bin/node qrcode-terminal/bin/qrcode-terminal.js";
 		String databaseName = args[0];
@@ -27,14 +30,9 @@ public class ExportSecrets {
 				String email = rs.getString(2);
 				String secret = rs.getString(3);
 
-				Process exec = Runtime.getRuntime().exec(createCommand(app, email, secret));
-				BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream()));
-				String line;
-				while ((line = reader.readLine()) != null) {
-					System.out.println(line);
-				}
+				BufferedReader reader = QRCodeUtil.displayQRCode(app, email, secret);
 				reader.close();
-				System.out.println(url + email + "%3Fsecret%3D" + secret);
+				System.out.println(QRCodeUtil.generateUrl(email, secret));
 			}
 			rs.close();
 			st.close();
@@ -54,15 +52,5 @@ public class ExportSecrets {
 
 			}
 		}
-	}
-
-	private static String createCommand(String app, String email, String secret) {
-		StringBuilder builder = new StringBuilder();
-		builder.append(app);
-		builder.append(" otpauth://totp/");
-		builder.append(email);
-		builder.append("?secret=");
-		builder.append(secret);
-		return builder.toString();
 	}
 }
